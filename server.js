@@ -12,10 +12,16 @@ mongoose.connect(keys.mongoUri, {useNewUrlParser: true, useUnifiedTopology: true
 
 // Setup database models
 require('./model/Account');
-
+require('./model/Score');
+require('./model/Session');
 // Setup the routes
 require('./routes/authenticationRoutes')(app);
+require('./routes/scoreRoutes')(app);
 
 app.listen(keys.port, () => {
     console.log("Listening on " + keys.port);
+
+
+    //var data = Date(Date.now().toLocaleString('pt-br'));
+   // console.log(Date.now().toLocaleString('pt-br'));
 });

@@ -12,8 +12,8 @@ module.exports = app => {
 
         var response = {};
 
-        const { rUsername, rPassword } = req.body;
-        if(rUsername == null || !passwordRegex.test(rPassword))
+        const { rEmail, rPassword } = req.body;
+        if(rEmail == null || !passwordRegex.test(rPassword))
         {
             response.code = 1;
             response.msg = "Invalid credentials";
@@ -21,7 +21,7 @@ module.exports = app => {
             return;
         }
 
-        var userAccount = await Account.findOne({ username: rUsername}, 'username adminFlag password');
+        var userAccount = await Account.findOne({ email: rEmail}, 'email adminFlag password');
         if(userAccount != null){
             argon2i.verify(userAccount.password, rPassword).then(async (success) => {
                 if(success){
@@ -30,7 +30,8 @@ module.exports = app => {
 
                     response.code = 0;
                     response.msg = "Account found";
-                    response.data = ( ({username, adminFlag}) => ({ username, adminFlag }) )(userAccount);
+                    console.log(userAccount);
+                    response.data = ( ({email, adminFlag}) => ({email, adminFlag }) )(userAccount);
                     res.send(response);
 
                     return;
@@ -55,8 +56,8 @@ module.exports = app => {
 
         var response = {};
 
-        const { rUsername, rPassword } = req.body;
-        if(rUsername == null || rUsername.length < 3 || rUsername.length > 24)
+        const { rEmail, rPassword, rName, rAge, rSchoolYear, rSchool } = req.body;
+        if(rEmail == null || rEmail.length < 3)
         {
             response.code = 1;
             response.msg = "Invalid credentials";
@@ -74,7 +75,7 @@ module.exports = app => {
             return;
         }
 
-        var userAccount = await Account.findOne({ username: rUsername},'_id');
+        var userAccount = await Account.findOne({ email: rEmail},'_id');
         if(userAccount == null){
             // Create a new account
             console.log("Create new account...")
@@ -87,8 +88,13 @@ module.exports = app => {
 
                 argon2i.hash(rPassword, salt).then(async (hash) => {
                     var newAccount = new Account({
-                        username : rUsername,
+                        email : rEmail,
                         password : hash,
+                        name: rName,
+                        age: rAge, 
+                        schoolyear: rSchoolYear,
+                        school: rSchool,
+
                         salt: salt,
         
                         lastAuthentication : Date.now()
@@ -97,14 +103,14 @@ module.exports = app => {
 
                     response.code = 0;
                     response.msg = "Account found";
-                    response.data = ( ({username}) => ({ username }) )(newAccount);
+                    response.data = ( ({email}) => ({ email }) )(newAccount);
                     res.send(response);
                     return;
                 });
             });
         } else {
             response.code = 2;
-            response.msg = "Username is already taken";
+            response.msg = "Email is already taken";
             res.send(response);
         }
         
