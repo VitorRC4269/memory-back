@@ -14,8 +14,6 @@ module.exports = app => {
 
         // Generate a unique access token
 
-
-
         var newScore = new Score({
             email: rEmail,
             levelLength: rTime,
@@ -33,8 +31,6 @@ module.exports = app => {
         res.send(response);
         return;
 
-
-
     }
     );
 
@@ -44,14 +40,10 @@ module.exports = app => {
 
         const { rEmail, rDifficulty } = req.body;
 
-
-
         // Create a new account
         console.log("Create new session...")
 
         // Generate a unique access token
-
-
 
         var newSession = new Session({
             email: rEmail,
@@ -65,9 +57,43 @@ module.exports = app => {
         response.data = (({ email }) => ({ email }))(newSession);
         res.send(response);
         return;
+    });
+
+
+    app.post('/score/getHigh', async (req, res) => {
+
+        var response = {};
+
+        const { rEmail, rDifficulty } = req.body;
+
+        if (rEmail == null) {
+            response.code = 1;
+            response.msg = "Invalid credentials";
+            res.send(response);
+            return;
+        }
+
+        var userScores = await Score.find({ email: rEmail, difficulty: rDifficulty } ).sort({ score: -1 }).limit(1);
+        var userScore = userScores[0];
+        if (userScore != null) {
 
 
 
-    }
-    );
+            response.code = 0;
+            response.msg = "Highscore found";
+            console.log(userScore);
+            userScore.movesCount
+            response.data = (({ email, levelLength, score, movesCount }) => ({ email, levelLength, score, movesCount }))(userScore);
+            console.log(response.data);
+            res.send(response);
+
+            return;
+        }
+        else {
+            response.code = 1;
+            response.msg = "Highscore not found";
+            res.send(response);
+            return;
+        }
+    });
 }
