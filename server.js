@@ -18,7 +18,8 @@ require('./model/Session');
 require('./routes/authenticationRoutes')(app);
 require('./routes/scoreRoutes')(app);
 
-app.listen(keys.port, () => {
+const port = process.env.PORT || 13756
+app.listen(port, () => {
     console.log("Listening on " + keys.port);
 
 
