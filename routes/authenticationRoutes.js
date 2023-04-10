@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const Account = mongoose.model('accounts');
 
-const argon2i = require('argon2-ffi').argon2i;
+//const argon2i = require('argon2-ffi').argon2i;
+const argon2 = require('argon2');
 const crypto = require('crypto');
 
 const passwordRegex = new RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,24})");
@@ -23,7 +24,7 @@ module.exports = app => {
 
         var userAccount = await Account.findOne({ email: rEmail}, 'email adminFlag password');
         if(userAccount != null){
-            argon2i.verify(userAccount.password, rPassword).then(async (success) => {
+            argon2.verify(userAccount.password, rPassword).then(async (success) => {
                 if(success){
                     userAccount.lastAuthentication = Date.now();
                     await userAccount.save();
@@ -86,7 +87,7 @@ module.exports = app => {
                     console.log(err);
                 }
 
-                argon2i.hash(rPassword, salt).then(async (hash) => {
+                argon2.hash(rPassword, salt).then(async (hash) => {
                     var newAccount = new Account({
                         email : rEmail,
                         password : hash,
