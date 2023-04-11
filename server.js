@@ -6,6 +6,13 @@ const bodyParser = require('body-parser');
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
 
+
+const cors = require('cors');
+app.use(cors({
+    origin: '*'
+}));
+
+
 // Setting up DB
 const mongoose = require('mongoose');
 mongoose.connect(keys.mongoUri, {useNewUrlParser: true, useUnifiedTopology: true});
