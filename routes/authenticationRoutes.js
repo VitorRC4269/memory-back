@@ -14,11 +14,14 @@ module.exports = app => {
         var response = {};
 
         const { rEmail, rPassword } = req.body;
+        console.log("login: " + rEmail);
         if (rEmail == null)
         //|| !passwordRegex.test(rPassword))
         {
             response.code = 1;
             response.msg = "Invalid credentials";
+            
+            console.log("Invalid credentials - email nulo");
             res.send(response);
             return;
         }
@@ -41,6 +44,7 @@ module.exports = app => {
                 else {
                     response.code = 1;
                     response.msg = "Invalid credentials";
+                    console.log("Invalid credentials - conta não achada");
                     res.send(response);
                     return;
                 }
@@ -49,6 +53,7 @@ module.exports = app => {
         else {
             response.code = 1;
             response.msg = "Invalid credentials";
+            console.log("Invalid credentials - não sei");
             res.send(response);
             return;
         }
@@ -62,12 +67,13 @@ module.exports = app => {
         if (rEmail == null || rEmail.length < 3) {
             response.code = 1;
             response.msg = "Invalid credentials";
+            console.log("Invalid credentials - email nulo criar");
             res.send(response);
             return;
         }
 
-        console.log(passwordRegex);
-        console.log(rPassword);
+        console.log("email: "+rEmail);
+        console.log("senha: "+rPassword);
         // if(!passwordRegex.test(rPassword))
         // {
         //     response.code = 3;
